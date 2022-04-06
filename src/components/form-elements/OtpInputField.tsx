@@ -36,7 +36,8 @@ const OTPInputField = (props: IOTPInputFieldProps) => {
         <>
             <input
                 name={`otp-${index}`}
-                type="number"
+                type="tel"
+                maxLength={1}
                 ref={otpInputRef}
                 onChange={(e) => handleInputChange(e)}
                 autoFocus={false}
