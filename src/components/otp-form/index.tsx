@@ -5,7 +5,7 @@ import OTPInputField from "../form-elements/OtpInputField";
 const emptyArray = [...Array(OTP_LENGTH)];
 
 function OTPForm() {
-    const [activeInputIndex, setActiveInputIndex] = useState(0);
+    const [activeInputIndex, setActiveInputIndex] = useState(1);
     return (
         <>
             <h2>Verification</h2>

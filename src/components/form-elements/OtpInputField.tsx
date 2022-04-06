@@ -1,5 +1,4 @@
-import { useEffect, useRef } from "react";
-import { OTP_LENGTH } from "src/constants";
+import { useEffect, useRef, useState } from "react";
 
 interface IOTPInputFieldProps {
     index: number
@@ -9,6 +8,8 @@ interface IOTPInputFieldProps {
 
 const OTPInputField = (props: IOTPInputFieldProps) => {
     const { index, activeInputIndex, setActiveInputIndex } = props
+
+    const [value, setValue] = useState<string>('')
 
     const otpInputRef = useRef<HTMLInputElement>(null);
 
@@ -20,15 +21,26 @@ const OTPInputField = (props: IOTPInputFieldProps) => {
 
     const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         // TODO : get form values
+        if (e.currentTarget.value.length > 1) return false;
+        setValue(e.currentTarget.value)
         handleInputFocus()
     };
 
     const handleInputFocus = () => {
-        if (activeInputIndex === OTP_LENGTH) {
-            setActiveInputIndex(0)
+
+        setActiveInputIndex(index + 1);
+    }
+
+    const handleKeyDownEvent = (e: React.KeyboardEvent<HTMLInputElement>) => {
+        const keys = ['+', '-', 'e', 'E', '.'];
+        console.log(e.key)
+        if (keys.includes(e.key)) {
+            e.preventDefault();
         }
-        else {
-            setActiveInputIndex(index + 1);
+
+        if (e.key === 'Backspace') {
+            setValue('')
+            setActiveInputIndex(index - 1);
         }
     }
 
@@ -36,12 +48,13 @@ const OTPInputField = (props: IOTPInputFieldProps) => {
         <>
             <input
                 name={`otp-${index}`}
-                type="tel"
+                type="number"
                 maxLength={1}
+                value={value ? value : ''}
                 ref={otpInputRef}
-                onChange={(e) => handleInputChange(e)}
-                autoFocus={false}
+                onChange={handleInputChange}
                 onBlur={() => setActiveInputIndex(0)}
+                onKeyDown={handleKeyDownEvent}
             />
         </>
     );
