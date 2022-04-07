@@ -4,7 +4,11 @@ import OTPInputField from '../form-elements/OtpInputField';
 
 const emptyArray = [...Array(OTP_LENGTH)];
 
-function OTPForm() {
+interface IOTPFormProps {
+    setIsGeneratorVisible: (value: boolean) => void;
+}
+
+function OTPForm(props: IOTPFormProps) {
     const [activeInputIndex, setActiveInputIndex] = useState(1);
 
     const [defaultValues, setDefaultValues] = useState<Array<string>>([]);
@@ -21,11 +25,9 @@ function OTPForm() {
         const digitsArray = pastedValue.split('', OTP_LENGTH);
         let activeIndex = activeInputIndex - 1;
         digitsArray.forEach((digit) => {
-            emptyArray.fill(
-                digit,
-                activeIndex,
-                activeInputIndex + digitsArray.length - 1
-            );
+            const fillFromIndex = activeIndex;
+            const fillToIndex = activeInputIndex + digitsArray.length - 1;
+            emptyArray.fill(digit, fillFromIndex, fillToIndex);
             activeIndex = activeIndex + 1;
         });
         setDefaultValues(emptyArray);
@@ -46,7 +48,7 @@ function OTPForm() {
     };
 
     return (
-        <>
+        <div className='otp-verification-form'>
             <h2>Verification</h2>
             <form>
                 {emptyArray.map((_, index) => (
@@ -59,8 +61,25 @@ function OTPForm() {
                         handleOnPaste={handleOnPaste}
                     />
                 ))}
+                <div>
+                    <button
+                        className='btn-primary'
+                        type='submit'
+                        style={{ marginRight: '10px' }}
+                    >
+                        Submit
+                    </button>
+                    <button
+                        className='btn-primary'
+                        type='button'
+                        onClick={() => props.setIsGeneratorVisible(true)}
+                        style={{ backgroundColor: 'white', color: 'black' }}
+                    >
+                        Generate code
+                    </button>
+                </div>
             </form>
-        </>
+        </div>
     );
 }
 

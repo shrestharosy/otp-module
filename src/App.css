@@ -2,47 +2,23 @@
   text-align: center;
 }
 
-.App-logo {
-  height: 40vmin;
-  pointer-events: none;
-}
-
-@media (prefers-reduced-motion: no-preference) {
-  .App-logo {
-    animation: App-logo-spin infinite 20s linear;
-  }
-}
-
-.App-header {
-  background-color: #282c34;
-  min-height: 100vh;
+.wrapper {
   display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  font-size: calc(10px + 2vmin);
-  color: white;
+  flex-direction: row;
+  justify-content: space-around;
+  text-align: center;
 }
 
-.App-link {
-  color: #61dafb;
+.otp-verification-form {
+  flex-direction: row;
 }
 
-@keyframes App-logo-spin {
-  from {
-    transform: rotate(0deg);
-  }
-  to {
-    transform: rotate(360deg);
-  }
-}
-
-input {
+.otp-input {
   width: 30px;
   height: 30px;
   margin-right: 20px;
   border-radius: 5px;
-  border: 1px solid 	rgb(106, 103, 103);
+  border: 1px solid rgb(106, 103, 103);
   text-align: center;
   font-size: larger;
 }
@@ -56,4 +32,90 @@ input::-webkit-inner-spin-button {
 /* Firefox */
 input[type="number"] {
   -moz-appearance: textfield;
+}
+
+.modal-container {
+  position: fixed;
+  top: 0;
+  left: 0;
+  bottom: 0;
+  right: 0;
+  height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(0, 0, 0, 0.7);
+}
+
+.modal {
+  z-index: 1;
+  position: relative;
+  width: 350px;
+  height: 220px;
+  border-radius: 5px;
+  background: white;
+  padding: 20px;
+}
+
+/* BUTTONS */
+
+button {
+  cursor: pointer;
+}
+
+.btn-primary {
+  margin-top: 25px;
+  padding: 8px 45px 8px 45px;
+  border-radius: 5px;
+  border: none;
+  background-color: #100249;
+  color: white;
+  text-transform: uppercase;
+  cursor: pointer;
+  font-weight: 500;
+}
+
+.btn-primary:hover {
+  background-color: rgba(16, 2, 73, 0.9);
+  box-shadow: 1px 1px 1px rgba(16, 2, 73, 0.6);
+}
+
+
+/* CSS */
+.btn-secondary {
+  background-color: #fff;
+  border: 1px solid #d5d9d9;
+  border-radius: 2px;
+  color: #0f1111;
+  cursor: pointer;
+  display: inline-block;
+  font-family: "Amazon Ember", sans-serif;
+  font-size: 13px;
+  padding: 1px 15px;
+  position: relative;
+  text-decoration: none;
+  text-align: left;
+}
+
+.btn-secondary:hover {
+  background-color: #f7fafa;
+}
+
+.btn-secondary:focus {
+  border-color: #008296;
+  box-shadow: rgba(213, 217, 217, .5) 0 2px 5px 0;
+  outline: 0;
+}
+
+.btn-close {
+  position: absolute;
+  top: 7px;
+  right: 7px;
+  padding: 8px 11px;
+  background: crimson;
+  color: white;
+  font-weight: bold;
+  border: none;
+  outline: none;
+  border-radius: 2px;
 }

@@ -102,6 +102,7 @@ const OTPInputField = (props: IOTPInputFieldProps) => {
         <>
             <input
                 name={`otp-${index}`}
+                className={'otp-input'}
                 type='number'
                 maxLength={1}
                 value={value ?? ''}
