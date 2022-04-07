@@ -21,26 +21,69 @@ const OTPInputField = (props: IOTPInputFieldProps) => {
 
     const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         // TODO : get form values
-        if (e.currentTarget.value.length > 1) return false;
-        setValue(e.currentTarget.value)
-        handleInputFocus()
+
+        handleFocusOnInputChange(e.currentTarget.value)
+
     };
 
-    const handleInputFocus = () => {
+    const handleFocus = () => {
+        setActiveInputIndex(index);
+        otpInputRef.current?.select();
+    }
 
+    const handleFocusOnInputChange = (inputValue: string) => {
+        const inputLength = inputValue.length;
+
+        switch (inputLength) {
+            case 0:
+                setValue('');
+                break;
+            case 1:
+                setValue(inputValue)
+                focusNextInput();
+                break;
+            default:
+                focusNextInput();
+                return false
+        }
+    }
+
+    const focusNextInput = () => {
         setActiveInputIndex(index + 1);
+
+    }
+
+    const focusPreviousInput = () => {
+        setActiveInputIndex(activeInputIndex - 1)
     }
 
     const handleKeyDownEvent = (e: React.KeyboardEvent<HTMLInputElement>) => {
         const keys = ['+', '-', 'e', 'E', '.'];
-        console.log(e.key)
-        if (keys.includes(e.key)) {
+        const pressedKey = e.key
+
+        console.log(pressedKey)
+
+        if (keys.includes(pressedKey)) {
             e.preventDefault();
         }
 
-        if (e.key === 'Backspace') {
-            setValue('')
-            setActiveInputIndex(index - 1);
+        switch (pressedKey) {
+            case 'Backspace':
+                setValue('');
+                focusPreviousInput();
+                break;
+            case 'Delete':
+                setValue('');
+                focusPreviousInput();
+                break;
+            case 'ArrowRight':
+                focusNextInput();
+                break;
+            case 'ArrowLeft':
+                focusPreviousInput();
+                break;
+            default:
+                break;
         }
     }
 
@@ -53,6 +96,7 @@ const OTPInputField = (props: IOTPInputFieldProps) => {
                 value={value ? value : ''}
                 ref={otpInputRef}
                 onChange={handleInputChange}
+                onFocus={handleFocus}
                 onBlur={() => setActiveInputIndex(0)}
                 onKeyDown={handleKeyDownEvent}
             />
