@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { OTP_LENGTH } from 'src/constants';
 import { otpService } from 'src/services';
+import { isValidInput } from 'src/utils';
 import OTPInputField from '../form-elements/OtpInputField';
 
 const emptyArray = [...Array(OTP_LENGTH)];
@@ -42,19 +43,6 @@ function OTPForm(props: IOTPFormProps) {
         setActiveInputIndex(activeIndex);
     };
 
-    const isValidInput = (inputValue: string): boolean => {
-        if (isNaN(+inputValue)) {
-            alert('Not a number');
-            return false;
-        }
-
-        if (inputValue.length === 0) {
-            return false;
-        }
-
-        return true;
-    };
-
     const checkIfValidOTP = (): boolean => {
         return otp.every((digitString) =>
             digitString?.length === 0 ? false : !isNaN(+digitString)
@@ -67,6 +55,7 @@ function OTPForm(props: IOTPFormProps) {
         const isValid = checkIfValidOTP();
         if (!isValid) {
             alert('Invalid OTP');
+            return;
         }
 
         try {
@@ -98,7 +87,7 @@ function OTPForm(props: IOTPFormProps) {
                     <button
                         className="btn-primary"
                         type="submit"
-                        disabled={!checkIfValidOTP()}
+                        // disabled={!checkIfValidOTP()}
                         style={{ marginRight: '10px' }}
                     >
                         Submit

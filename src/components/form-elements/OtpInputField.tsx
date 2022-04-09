@@ -1,4 +1,5 @@
 import { useEffect, useRef, useState } from 'react';
+import { isValidInput } from 'src/utils';
 
 interface IOTPInputFieldProps {
     index: number;
@@ -69,10 +70,6 @@ const OTPInputField = (props: IOTPInputFieldProps) => {
     const handleFocus = () => {
         setActiveInputIndex(index);
         otpInputRef.current?.select();
-    };
-
-    const isValidInput = (input: string) => {
-        return input?.length === 0 ? false : !isNaN(+input);
     };
 
     const handleFocusOnInputChange = (inputValue: string) => {
