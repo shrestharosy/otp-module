@@ -3,8 +3,11 @@ import { useEffect, useRef, useState } from 'react';
 interface IOTPInputFieldProps {
     index: number;
     activeInputIndex: number;
+    otp: string[];
+    isSubmitted: boolean;
     setActiveInputIndex: (index: number) => void;
     handleOnPaste: (e: React.ClipboardEvent<HTMLInputElement>) => void;
+    setOtp: React.Dispatch<React.SetStateAction<string[]>>;
     defaultValue?: string | null;
 }
 
@@ -13,8 +16,11 @@ const OTPInputField = (props: IOTPInputFieldProps) => {
         index,
         activeInputIndex,
         defaultValue,
+        otp,
+        isSubmitted,
         setActiveInputIndex,
         handleOnPaste,
+        setOtp,
     } = props;
 
     const [value, setValue] = useState<string>('');
@@ -33,14 +39,40 @@ const OTPInputField = (props: IOTPInputFieldProps) => {
         }
     }, [defaultValue]);
 
-    const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-        // TODO : get form values
-        handleFocusOnInputChange(e.currentTarget.value);
+    const handleInputChange = (
+        e: React.ChangeEvent<HTMLInputElement>
+    ): void => {
+        const input = e.currentTarget.value;
+        handleFocusOnInputChange(input);
+        setInOTPArray(input);
+    };
+
+    const setInOTPArray = (input: string) => {
+        const cleanedInput = cleanupInput(input);
+        otp[index - 1] = cleanedInput;
+        setOtp(otp);
+    };
+
+    const cleanupInput = (inputValue: string): string => {
+        const inputLength = inputValue.length;
+
+        switch (inputLength) {
+            case 0:
+                return '';
+            case 1:
+                return inputValue;
+            default:
+                return inputValue.charAt(0);
+        }
     };
 
     const handleFocus = () => {
         setActiveInputIndex(index);
         otpInputRef.current?.select();
+    };
+
+    const isValidInput = (input: string) => {
+        return input?.length === 0 ? false : !isNaN(+input);
     };
 
     const handleFocusOnInputChange = (inputValue: string) => {
@@ -49,12 +81,15 @@ const OTPInputField = (props: IOTPInputFieldProps) => {
         switch (inputLength) {
             case 0:
                 setValue('');
+                setInOTPArray('');
                 break;
             case 1:
                 setValue(inputValue);
+                setInOTPArray(inputValue);
                 focusNextInput();
                 break;
             default:
+                setValue(inputValue.charAt(0));
                 focusNextInput();
                 return false;
         }
@@ -81,10 +116,12 @@ const OTPInputField = (props: IOTPInputFieldProps) => {
         switch (pressedKey) {
             case 'Backspace':
                 setValue('');
+                setInOTPArray('');
                 focusPreviousInput();
                 break;
             case 'Delete':
                 setValue('');
+                setInOTPArray('');
                 focusPreviousInput();
                 break;
             case 'ArrowRight':
@@ -102,8 +139,10 @@ const OTPInputField = (props: IOTPInputFieldProps) => {
         <>
             <input
                 name={`otp-${index}`}
-                className={'otp-input'}
-                type='number'
+                className={`otp-input ${
+                    isSubmitted && !isValidInput(value) && 'otp-input-error'
+                }`}
+                type="number"
                 maxLength={1}
                 value={value ?? ''}
                 ref={otpInputRef}

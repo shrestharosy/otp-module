@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { OTP_LENGTH } from 'src/constants';
+import { otpService } from 'src/services';
 import OTPInputField from '../form-elements/OtpInputField';
 
 const emptyArray = [...Array(OTP_LENGTH)];
@@ -13,7 +14,11 @@ function OTPForm(props: IOTPFormProps) {
 
     const [defaultValues, setDefaultValues] = useState<Array<string>>([]);
 
-    const handleOnPaste = (e: React.ClipboardEvent<HTMLInputElement>) => {
+    const [otp, setOtp] = useState<Array<string>>([...Array(OTP_LENGTH)]);
+
+    const [isSubmitted, setIsSubmitted] = useState(false);
+
+    const handleOnPaste = (e: React.ClipboardEvent<HTMLInputElement>): void => {
         e.preventDefault();
         const pastedValue = e.clipboardData.getData('text/plain').trim();
         const isValid = isValidInput(pastedValue);
@@ -24,17 +29,20 @@ function OTPForm(props: IOTPFormProps) {
 
         const digitsArray = pastedValue.split('', OTP_LENGTH);
         let activeIndex = activeInputIndex - 1;
+        let otpArray: Array<string> = [];
+
         digitsArray.forEach((digit) => {
             const fillFromIndex = activeIndex;
             const fillToIndex = activeInputIndex + digitsArray.length - 1;
-            emptyArray.fill(digit, fillFromIndex, fillToIndex);
+            otpArray = emptyArray.fill(digit, fillFromIndex, fillToIndex);
             activeIndex = activeIndex + 1;
         });
-        setDefaultValues(emptyArray);
+        setDefaultValues(otpArray);
+        setOtp(otpArray);
         setActiveInputIndex(activeIndex);
     };
 
-    const isValidInput = (inputValue: string) => {
+    const isValidInput = (inputValue: string): boolean => {
         if (isNaN(+inputValue)) {
             alert('Not a number');
             return false;
@@ -47,31 +55,57 @@ function OTPForm(props: IOTPFormProps) {
         return true;
     };
 
+    const checkIfValidOTP = (): boolean => {
+        return otp.every((digitString) =>
+            digitString?.length === 0 ? false : !isNaN(+digitString)
+        );
+    };
+
+    const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+        e.preventDefault();
+        setIsSubmitted(true);
+        const isValid = checkIfValidOTP();
+        if (!isValid) {
+            alert('Invalid OTP');
+        }
+
+        try {
+            await otpService.validateOTP(+otp.join(''));
+            alert('Success');
+        } catch (error) {
+            alert(error);
+        }
+    };
+
     return (
-        <div className='otp-verification-form'>
+        <div className="otp-verification-form">
             <h2>Verification</h2>
-            <form>
+            <form onSubmit={handleSubmit}>
                 {emptyArray.map((_, index) => (
                     <OTPInputField
                         key={index}
                         index={index + 1}
                         activeInputIndex={activeInputIndex}
                         defaultValue={defaultValues[index]}
+                        otp={otp}
+                        isSubmitted={isSubmitted}
                         setActiveInputIndex={setActiveInputIndex}
                         handleOnPaste={handleOnPaste}
+                        setOtp={setOtp}
                     />
                 ))}
                 <div>
                     <button
-                        className='btn-primary'
-                        type='submit'
+                        className="btn-primary"
+                        type="submit"
+                        disabled={!checkIfValidOTP()}
                         style={{ marginRight: '10px' }}
                     >
                         Submit
                     </button>
                     <button
-                        className='btn-primary'
-                        type='button'
+                        className="btn-primary"
+                        type="button"
                         onClick={() => props.setIsGeneratorVisible(true)}
                         style={{ backgroundColor: 'white', color: 'black' }}
                     >
