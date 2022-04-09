@@ -55,6 +55,7 @@ function OTPForm(props: IOTPFormProps) {
         const isValid = checkIfValidOTP();
         if (!isValid) {
             alert('Invalid OTP');
+            setIsSubmitting(false);
             return;
         }
 
