@@ -17,7 +17,7 @@ function OTPForm(props: IOTPFormProps) {
 
     const [otp, setOtp] = useState<Array<string>>([...Array(OTP_LENGTH)]);
 
-    const [isSubmitted, setIsSubmitted] = useState(false);
+    const [isSubmitting, setIsSubmitting] = useState(false);
 
     const handleOnPaste = (e: React.ClipboardEvent<HTMLInputElement>): void => {
         e.preventDefault();
@@ -51,7 +51,7 @@ function OTPForm(props: IOTPFormProps) {
 
     const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
-        setIsSubmitted(true);
+        setIsSubmitting(true);
         const isValid = checkIfValidOTP();
         if (!isValid) {
             alert('Invalid OTP');
@@ -63,11 +63,13 @@ function OTPForm(props: IOTPFormProps) {
             alert('Success');
         } catch (error) {
             alert(error);
+        } finally {
+            setIsSubmitting(false);
         }
     };
 
     return (
-        <div className="otp-verification-form">
+        <div className='otp-verification-form'>
             <h2>Verification</h2>
             <form onSubmit={handleSubmit}>
                 {emptyArray.map((_, index) => (
@@ -77,7 +79,7 @@ function OTPForm(props: IOTPFormProps) {
                         activeInputIndex={activeInputIndex}
                         defaultValue={defaultValues[index]}
                         otp={otp}
-                        isSubmitted={isSubmitted}
+                        isSubmitted={isSubmitting}
                         setActiveInputIndex={setActiveInputIndex}
                         handleOnPaste={handleOnPaste}
                         setOtp={setOtp}
@@ -85,16 +87,17 @@ function OTPForm(props: IOTPFormProps) {
                 ))}
                 <div>
                     <button
-                        className="btn-primary"
-                        type="submit"
+                        className='btn-primary'
+                        type='submit'
                         // disabled={!checkIfValidOTP()}
+                        disabled={isSubmitting}
                         style={{ marginRight: '10px' }}
                     >
                         Submit
                     </button>
                     <button
-                        className="btn-primary"
-                        type="button"
+                        className='btn-primary'
+                        type='button'
                         onClick={() => props.setIsGeneratorVisible(true)}
                         style={{ backgroundColor: 'white', color: 'black' }}
                     >
