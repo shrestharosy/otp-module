@@ -5,5 +5,5 @@ export const routes = {
 };
 
 export const errorMessages = {
-    INVALID_NUMBER: 'Please enter a valid number',
+    INVALID_OTP: 'Please enter a valid otp',
 };

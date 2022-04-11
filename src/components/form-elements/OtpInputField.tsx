@@ -96,11 +96,15 @@ const OTPInputField = (props: IOTPInputFieldProps) => {
     };
 
     const focusNextInput = () => {
-        setActiveInputIndex(index + 1);
+        if (index <= OTP_LENGTH - 1) {
+            setActiveInputIndex(index + 1);
+        }
     };
 
     const focusPreviousInput = () => {
-        setActiveInputIndex(activeInputIndex - 1);
+        if (activeInputIndex > 1 && activeInputIndex <= OTP_LENGTH) {
+            setActiveInputIndex(activeInputIndex - 1);
+        }
     };
 
     const handleKeyDownEvent = (e: React.KeyboardEvent<HTMLInputElement>) => {

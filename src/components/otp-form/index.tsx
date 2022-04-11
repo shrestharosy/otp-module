@@ -24,14 +24,17 @@ function OTPForm(props: IOTPFormProps) {
     const handleOnPaste = (e: React.ClipboardEvent<HTMLInputElement>): void => {
         e.preventDefault();
         const pastedValue = e.clipboardData.getData('text/plain').trim();
+
         const isValid = isValidNumber(pastedValue);
 
         if (!isValid) {
-            setFormError(errorMessages.INVALID_NUMBER);
+            // setFormError(errorMessages.INVALID_OTP);
+            alert('Invalid OTP');
             return;
         }
 
         const digitsArray = pastedValue.split('', OTP_LENGTH);
+
         let activeIndex = activeInputIndex - 1;
         let otpArray: Array<string> = [];
 
@@ -39,8 +42,10 @@ function OTPForm(props: IOTPFormProps) {
             const fillFromIndex = activeIndex;
             const fillToIndex = activeInputIndex + digitsArray.length - 1;
             otpArray = emptyArray.fill(digit, fillFromIndex, fillToIndex);
+            // console.log("=====HERE======", fillFromIndex, fillToIndex, activeInputIndex, emptyArray);
             activeIndex = activeIndex + 1;
         });
+        // console.log(otpArray, "=====OTP_ARRAY=====")
         setDefaultValues(otpArray);
         setOtp(otpArray);
         setActiveInputIndex(activeIndex);
@@ -51,7 +56,7 @@ function OTPForm(props: IOTPFormProps) {
         const isValid = isValidInput(otpString);
 
         if (!isValid) {
-            setFormError(errorMessages.INVALID_NUMBER);
+            setFormError(errorMessages.INVALID_OTP);
         }
 
         return isValid;
