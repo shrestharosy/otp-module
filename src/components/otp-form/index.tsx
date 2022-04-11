@@ -1,7 +1,7 @@
 import { useState } from 'react';
-import { OTP_LENGTH } from 'src/constants';
+import { errorMessages, OTP_LENGTH } from 'src/constants';
 import { otpService } from 'src/services';
-import { isValidInput } from 'src/utils';
+import { isValidInput, isValidNumber } from 'src/utils';
 import OTPInputField from '../form-elements/OtpInputField';
 
 const emptyArray = [...Array(OTP_LENGTH)];
@@ -19,12 +19,15 @@ function OTPForm(props: IOTPFormProps) {
 
     const [isSubmitting, setIsSubmitting] = useState(false);
 
+    const [formError, setFormError] = useState<string>('');
+
     const handleOnPaste = (e: React.ClipboardEvent<HTMLInputElement>): void => {
         e.preventDefault();
         const pastedValue = e.clipboardData.getData('text/plain').trim();
-        const isValid = isValidInput(pastedValue);
+        const isValid = isValidNumber(pastedValue);
 
         if (!isValid) {
+            setFormError(errorMessages.INVALID_NUMBER);
             return;
         }
 
@@ -44,9 +47,14 @@ function OTPForm(props: IOTPFormProps) {
     };
 
     const checkIfValidOTP = (): boolean => {
-        return otp.every((digitString) =>
-            digitString?.length === 0 ? false : !isNaN(+digitString)
-        );
+        const otpString = otp.join('');
+        const isValid = isValidInput(otpString);
+
+        if (!isValid) {
+            setFormError(errorMessages.INVALID_NUMBER);
+        }
+
+        return isValid;
     };
 
     const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
@@ -54,7 +62,6 @@ function OTPForm(props: IOTPFormProps) {
         setIsSubmitting(true);
         const isValid = checkIfValidOTP();
         if (!isValid) {
-            alert('Invalid OTP');
             setIsSubmitting(false);
             return;
         }
@@ -80,7 +87,8 @@ function OTPForm(props: IOTPFormProps) {
                         activeInputIndex={activeInputIndex}
                         defaultValue={defaultValues[index]}
                         otp={otp}
-                        isSubmitted={isSubmitting}
+                        isSubmitting={isSubmitting}
+                        formError={formError}
                         setActiveInputIndex={setActiveInputIndex}
                         handleOnPaste={handleOnPaste}
                         setOtp={setOtp}

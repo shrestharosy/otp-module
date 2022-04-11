@@ -1,6 +1,11 @@
+import { OTP_LENGTH } from 'src/constants/index';
+
 export const isValidInput = (inputValue: string): boolean => {
+    return isValidNumber(inputValue) && isValidLength(inputValue);
+};
+
+export const isValidNumber = (inputValue: string, index?: number): boolean => {
     if (isNaN(+inputValue)) {
-        alert('Not a number');
         return false;
     }
 
@@ -9,4 +14,8 @@ export const isValidInput = (inputValue: string): boolean => {
     }
 
     return true;
+};
+
+export const isValidLength = (inputValue: string) => {
+    return inputValue.length === OTP_LENGTH;
 };

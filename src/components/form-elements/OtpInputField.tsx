@@ -1,11 +1,13 @@
 import { useEffect, useRef, useState } from 'react';
-import { isValidInput } from 'src/utils';
+import { OTP_LENGTH } from 'src/constants';
+import { isValidNumber } from 'src/utils';
 
 interface IOTPInputFieldProps {
     index: number;
     activeInputIndex: number;
     otp: string[];
-    isSubmitted: boolean;
+    isSubmitting: boolean;
+    formError: string;
     setActiveInputIndex: (index: number) => void;
     handleOnPaste: (e: React.ClipboardEvent<HTMLInputElement>) => void;
     setOtp: React.Dispatch<React.SetStateAction<string[]>>;
@@ -18,7 +20,8 @@ const OTPInputField = (props: IOTPInputFieldProps) => {
         activeInputIndex,
         defaultValue,
         otp,
-        isSubmitted,
+        isSubmitting,
+        formError,
         setActiveInputIndex,
         handleOnPaste,
         setOtp,
@@ -132,14 +135,22 @@ const OTPInputField = (props: IOTPInputFieldProps) => {
         }
     };
 
+    const showErrorMessage = () =>
+        (isSubmitting || formError) &&
+        !isValidNumber(value) &&
+        index === OTP_LENGTH;
+
+    const highlightInputError = () =>
+        (isSubmitting || formError) && !isValidNumber(value, index);
+
     return (
         <>
             <input
                 name={`otp-${index}`}
                 className={`otp-input ${
-                    isSubmitted && !isValidInput(value) && 'otp-input-error'
+                    highlightInputError() && 'otp-input-error'
                 }`}
-                type="number"
+                type='number'
                 maxLength={1}
                 value={value ?? ''}
                 ref={otpInputRef}
@@ -149,6 +160,9 @@ const OTPInputField = (props: IOTPInputFieldProps) => {
                 onKeyDown={handleKeyDownEvent}
                 onPaste={handleOnPaste}
             />
+            {showErrorMessage() && (
+                <div className='text-error'>{formError}</div>
+            )}
         </>
     );
 };

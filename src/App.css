@@ -128,3 +128,10 @@ button {
     outline: none;
     border-radius: 2px;
 }
+
+.text-error {
+    color: crimson;
+    font-size: 12px;
+    margin-top: 8px;
+    padding-right: 180px;
+}
