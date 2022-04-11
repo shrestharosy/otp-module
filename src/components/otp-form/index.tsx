@@ -1,5 +1,6 @@
 import { useState } from 'react';
-import { errorMessages, OTP_LENGTH } from 'src/constants';
+
+import { errorMessages, OTP_LENGTH, routes } from 'src/constants';
 import { otpService } from 'src/services';
 import { isValidInput, isValidNumber } from 'src/utils';
 import OTPInputField from '../form-elements/OtpInputField';
@@ -74,6 +75,7 @@ function OTPForm(props: IOTPFormProps) {
         try {
             await otpService.validateOTP(+otp.join(''));
             alert('Success');
+            window.location.href = routes.SUCCESS;
         } catch (error) {
             alert(error);
         } finally {
